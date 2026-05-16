@@ -114,8 +114,12 @@ constexpr std::strong_ordering CompareIdentifier(std::string_view left,
   if (left_is_numeric && right_is_numeric) {
     return CompareNumericIdentifiers(left, right);
   }
-  if (left_is_numeric) return std::strong_ordering::less;
-  if (right_is_numeric) return std::strong_ordering::greater;
+  if (left_is_numeric) {
+    return std::strong_ordering::less;
+  }
+  if (right_is_numeric) {
+    return std::strong_ordering::greater;
+  }
   return left <=> right;
 }
 
@@ -128,7 +132,9 @@ constexpr std::strong_ordering CompareIdentifier(std::string_view left,
  */
 constexpr std::string_view FirstIdentifier(std::string_view text) noexcept {
   const std::size_t dot = text.find('.');
-  if (dot == std::string_view::npos) return text;
+  if (dot == std::string_view::npos) {
+    return text;
+  }
   return text.substr(0, dot);
 }
 
@@ -142,7 +148,9 @@ constexpr std::string_view FirstIdentifier(std::string_view text) noexcept {
 constexpr std::string_view RemoveFirstIdentifier(
     std::string_view text) noexcept {
   const std::size_t dot = text.find('.');
-  if (dot == std::string_view::npos) return {};
+  if (dot == std::string_view::npos) {
+    return {};
+  }
   return text.substr(dot + 1);
 }
 
@@ -163,20 +171,30 @@ constexpr std::string_view RemoveFirstIdentifier(
  */
 constexpr std::strong_ordering ComparePrerelease(
     std::string_view left, std::string_view right) noexcept {
-  if (left.empty() && right.empty()) return std::strong_ordering::equal;
-  if (left.empty()) return std::strong_ordering::greater;
-  if (right.empty()) return std::strong_ordering::less;
+  if (left.empty() && right.empty()) {
+    return std::strong_ordering::equal;
+  }
+  if (left.empty()) {
+    return std::strong_ordering::greater;
+  }
+  if (right.empty()) {
+    return std::strong_ordering::less;
+  }
 
   while (!left.empty() && !right.empty()) {
     const std::strong_ordering order =
         CompareIdentifier(FirstIdentifier(left), FirstIdentifier(right));
-    if (order != std::strong_ordering::equal) return order;
+    if (order != std::strong_ordering::equal) {
+      return order;
+    }
 
     left = RemoveFirstIdentifier(left);
     right = RemoveFirstIdentifier(right);
   }
 
-  if (left.empty() && right.empty()) return std::strong_ordering::equal;
+  if (left.empty() && right.empty()) {
+    return std::strong_ordering::equal;
+  }
   return left.empty() ? std::strong_ordering::less
                       : std::strong_ordering::greater;
 }
